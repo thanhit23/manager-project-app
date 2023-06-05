@@ -1,0 +1,164 @@
+<div class="row bg-secondary bg-gradient mt-4 px-2 py-3">
+  <div class="col-lg-3 col-md-6 col-sm-12 text-center">
+      <h6 class="text-white">TRƯỞNG NHÓM</h6>
+      <img class="rounded-circle w-25" src="https://w7.pngwing.com/pngs/340/956/png-transparent-profile-user-icon-computer-icons-user-profile-head-ico-miscellaneous-black-desktop-wallpaper.png" alt="">
+      <p class="fw-bold">{{user.name}}</p>
+      <!-- Tổng quan dự án -->
+      <h6 class="text-center bg-gradient bg-dark text-white py-2 mt-3">TỔNG QUAN VỀ: {{projectById.projectName | uppercase}}</h6>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Thành viên dự án
+          <span class="badge bg-primary">{{projectById.teamSize}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Ngày bắt đầu
+          <span class="badge bg-primary" *ngIf="projectById?.dateStart">{{projectById.dateStart.substr(0, 10)}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Ngày kết thúc
+          <span class="badge bg-primary" *ngIf="projectById?.dateEnd">{{projectById.dateEnd.substr(0, 10)}}</span>
+        </li>
+      </ul>
+
+      <!-- Tổng quan nhóm -->
+      <h6 class="text-center bg-gradient bg-dark text-white py-2 mt-3">TỔNG QUAN NHÓM</h6>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Tổng số lượng thành viên
+          <span class="badge bg-primary rounded-pill">{{employees.length}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Tổng chi phí của tất cả dự án
+          <span class="badge bg-primary rounded-pill">{{totalBudgetProject | currency}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Các task đang xử lý
+          <span class="badge bg-primary rounded-pill">{{taskProcessing.length}}</span>
+        </li>
+      </ul>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-12">
+      <div class="d-flex justify-content-between">
+          <select class="form-select w-auto" aria-label="Default select example" [(ngModel)]="projectId"  (change)="selectProject(projectId)">
+              <option value="" disabled selected>Chọn dự án</option>
+              <option *ngFor="let project of projects" value={{project._id}}>{{project.projectName}}</option>
+          </select>
+      </div>
+      <div class="mt-4 bg-light px-2 py-2">
+          <div class="mb-5">
+              <h6 class="text-center bg-gradient bg-dark text-white py-2">TỔNG THỂ VỀ DỰ ÁN</h6>
+              <table class="table caption-top">
+                  <tbody>
+                  <tr>
+                      <td>Chi phí dự án</td>
+                      <td>{{projectById.budget | currency}}</td>
+                  </tr>
+                  <tr>
+                      <td>Hiện tại đã chi</td>
+                      <td>{{projectById.spending | currency}}</td>
+                  </tr>
+                  <tr>
+                      <td>Còn lại</td>
+                      <td>{{projectById.budget - projectById.spending | currency}}</td>
+                  </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="mb-5">
+              <h6 class="text-center bg-gradient bg-dark text-white py-2">THÀNH VIÊN CỦA NHÓM</h6>
+              <table class="table caption-top">
+                  <thead>
+                    <tr>
+                      <th scope="col">Khu vực</th>
+                      <th scope="col">Số lượng nhân viên</th>
+                      <th scope="col">Nhân viên tạm nghỉ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">East</th>
+                      <td>{{empAreaEast.length}}</td>
+                      <td>{{empBusyAreaEast.length}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">West</th>
+                      <td>{{empAreaWest.length}}</td>
+                      <td>{{empBusyAreaWest.length}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">South</th>
+                      <td>{{empAreaSouth.length}}</td>
+                      <td>{{empBusyAreaSouth.length}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">North</th>
+                      <td>{{empAreaNorth.length}}</td>
+                      <td>{{empBusyAreaNorth.length}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+          </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-12 col-sm-12">
+      <div class="bg-light">
+          <h6 class="text-center bg-gradient bg-dark text-white py-2">THÀNH VIÊN THEO KHU VỰC</h6>
+          <div class="dropdown">
+            <button class="btn btn-secondary w-100 rounded-0 border-bottom " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              East
+            </button>
+            <table class="table dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <tbody class="d-block">
+                <tr class="d-block" *ngFor="let empEast of empAreaEast; index as i">
+                    <th class="d-block bg-gradient bg-warning" scope="row">#{{i + 1}} {{empEast.name}}</th>
+                    <td class="d-block">{{empEast.status}}</td>
+                </tr>
+              </tbody>
+              <tr *ngIf="empAreaEast.length === 0" class="text-center fw-bold"><td>Khu vực này hiện không có nhân viên nào!</td></tr>
+            </table>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary w-100 rounded-0 border-bottom " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              West
+            </button>
+            <table class="table dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <tbody class="d-block">
+                <tr class="d-block" *ngFor="let empWest of empAreaWest; index as i">
+                  <th class="d-block bg-gradient bg-warning" scope="row">#{{i + 1}} {{empWest.name}}</th>
+                  <td class="d-block">{{empWest.status}}</td>
+              </tr>
+              </tbody>
+              <tr *ngIf="empAreaWest.length === 0" class="text-center fw-bold"><td>Khu vực này hiện không có nhân viên nào!</td></tr>
+            </table>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary w-100 rounded-0 border-bottom " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              South
+            </button>
+            <table class="table dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <tbody class="d-block">
+                <tr class="d-block" *ngFor="let empSouth of empAreaSouth; index as i">
+                  <th class="d-block bg-gradient bg-warning" scope="row">#{{i + 1}} {{empSouth.name}}</th>
+                  <td class="d-block">{{empSouth.status}}</td>
+              </tr>
+              </tbody>
+              <tr *ngIf="empAreaSouth.length === 0" class="text-center fw-bold"><td>Khu vực này hiện không có nhân viên nào!</td></tr>
+            </table>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary w-100 rounded-0 border-bottom " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              North
+            </button>
+            <table class="table dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <tbody class="d-block">
+                <tr class="d-block" *ngFor="let empNorth of empAreaNorth; index as i">
+                  <th class="d-block bg-gradient bg-warning" scope="row">#{{i + 1}} {{empNorth.name}}</th>
+                  <td class="d-block">{{empNorth.status}}</td>
+              </tr>
+              </tbody>
+              <tr *ngIf="empAreaNorth.length === 0" class="text-center fw-bold"><td>Khu vực này hiện không có nhân viên nào!</td></tr>
+            </table>
+          </div>
+      </div>
+  </div>
+</div>

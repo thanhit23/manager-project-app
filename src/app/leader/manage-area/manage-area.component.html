@@ -1,0 +1,130 @@
+<div class="mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h4>QUẢN LÝ KHU VỰC</h4>
+        
+        <div class="d-flex">
+            <form class="mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control form-control-dark" name="listFilter" [(ngModel)]="listFilter" placeholder="Search..." aria-label="Search">
+              </form>
+              <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalNewArea">
+                Thêm mới
+            </button>
+        </div>
+          
+        <!-- Modal New Area -->
+        <div class="modal modal-lg fade" id="modalNewArea" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới khu vực</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form #dataForm="ngForm" (submit)="createArea(dataForm)">
+                        <!-- Area Name -->
+                        <div class="form-outline mb-3">
+                            <label class="form-label fw-bold" for="nameArea">Tên khu vực</label>
+                            <input type="text" id="nameArea" name="nameArea" required ngModel #nameArea="ngModel" class="form-control" />
+                            <div *ngIf="nameArea.invalid && (nameArea.dirty || nameArea.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="nameArea.errors?.['required']">Tên khu vực không được để trống!</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="!dataForm.valid">Tạo</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <table class="table align-middle mb-0 bg-white text-center">
+        <thead class="bg-dark text-white">
+        <tr>
+            <th>#</th>
+            <th>Tên khu vực</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody *ngIf="areas.length > 0 && !isFetching">
+        <tr *ngFor="let area of areas | paginate: {itemsPerPage: pageSize, currentPage: currentPageIndex}; index as i">
+            <th scope="row">{{i + 1}}</th>
+            <td>{{area.nameArea}}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger me-2 btn-rounded" data-bs-toggle="modal" data-bs-target="#modalDeleteArea" (click)="deleteArea(area._id)">
+                    Xóa
+                </button>
+                <button type="button" class="btn btn-sm btn- btn-primary rounded" data-bs-target="#modalEditArea" data-bs-toggle="modal" (click)="getOneArea(area._id)">
+                    Sửa
+                </button>
+            </td>
+        </tr>
+        </tbody>
+        <tr *ngIf="areas.length === 0 && !errorMessage && !isFetching" class="text-center fw-bold"><td colspan="3">Không có khu vực nào!</td></tr>
+    </table>
+    <!-- Pagination -->
+    <div class="mx-auto text-center mt-4" *ngIf="areas.length > pageSize">
+        <pagination-controls 
+            (pageChange)="currentPageIndex = $event">
+        </pagination-controls>
+    </div>
+    <!-- Fetching -->
+    <div *ngIf="isFetching && !errorMessage" class="w-100 mt-3 loading">
+        <p class="spinner mx-auto"></p>
+    </div>
+    <!-- Alert error -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+        <h4>Có lỗi xảy ra!</h4>
+        <p>{{errorMessage}}</p>
+    </div>
+</div>
+
+<!-- Modal Edit Area -->
+<div class="modal modal-lg fade" id="modalEditArea" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cập nhật khu vực</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #dataFormEdit="ngForm" (submit)="updateArea(dataFormEdit)">
+                    <!-- Area Name -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="nameArea">Tên khu vực</label>
+                        <input type="text" id="nameArea" name="nameArea" [(ngModel)]="areaEdit.nameArea" required #nameAreaEdit="ngModel" class="form-control" />
+                        <div *ngIf="nameAreaEdit.invalid && (nameAreaEdit.dirty || nameAreaEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="nameAreaEdit.errors?.['required']">Tên khu vực không được để trống!</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="!dataFormEdit.valid">Cập nhât</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Area -->
+<div class="modal fade" id="modalDeleteArea" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Xóa khu vực?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-muted">Bạn có chắc chắn muốn xóa khu vực này không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Thoát</button>
+            <button type="button" class="btn btn-danger" (click)="confirmDeleteArea()" data-bs-dismiss="modal">Xóa</button>
+        </div>
+    </div>
+    </div>
+</div>

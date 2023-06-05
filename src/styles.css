@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+.invalid-input {
+    font-size: 12px;
+    color: red;
+}
+
+/* Loading */
+.spinner {
+    width: 25px;
+    height: 25px;
+    border-top: 3px solid red;
+    border-left: 3px solid red;
+    border-right: 3px solid red;
+    border-bottom: 3px solid transparent;
+    background-color: none;
+    border-radius: 50%;
+    animation: spinner 1.5s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ngx-pagination {
+    padding-left: 0;
+}
+
+.ngx-pagination > .current {
+    background: #000!important;
+}

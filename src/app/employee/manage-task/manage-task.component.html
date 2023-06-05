@@ -1,0 +1,377 @@
+<div class="mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h4>QUẢN LÝ NHIỆM VỤ</h4>
+        <div class="d-flex">
+            <form class="mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control form-control-dark" name="listFilter" [(ngModel)]="listFilter"
+                    placeholder="Search..." aria-label="Search">
+            </form>
+            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalNewTask">
+                Thêm mới
+            </button>
+        </div>
+
+        <!-- Modal New Task -->
+        <div class="modal modal-lg fade" id="modalNewTask" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới nhiệm vụ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form #dataForm="ngForm" (submit)="createTask(dataForm)">
+                            <!-- Task Name -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label fw-bold" for="name">Tên nhiệm vụ</label>
+                                <input type="text" id="name" required ngModel #taskName="ngModel" name="name"
+                                    class="form-control" />
+                                <div *ngIf="taskName.invalid && (taskName.dirty || taskName.touched)" class="mt-1">
+                                    <div class="invalid-input" *ngIf="taskName.errors?.['required']">Tên nhiệm vụ không
+                                        được để trống!</div>
+                                </div>
+                            </div>
+
+                            <!-- Date Start -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label fw-bold" for="dateStart">Ngày bắt đầu</label>
+                                <input type="date" id="dateStart" required ngModel #dateStart="ngModel" name="dateStart"
+                                    class="form-control" />
+                                <div *ngIf="dateStart.invalid && (dateStart.dirty || dateStart.touched)" class="mt-1">
+                                    <div class="invalid-input" *ngIf="dateStart.errors?.['required']">Ngày bắt đầu không
+                                        được để trống!</div>
+                                </div>
+                            </div>
+
+                            <!-- Project and Priority -->
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label fw-bold">Dự án</label>
+                                    <select
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                        required
+                                        ngModel
+                                        #project="ngModel"
+                                        name="projectId"
+                                    >
+                                        <option disabled value="">Chọn dự án</option>
+                                        <option
+                                            *ngFor="let project of projects " 
+                                            value={{project._id}}
+                                        >
+                                            {{project.name}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="project.invalid && (project.dirty || project.touched)" class="mt-1">
+                                        <div class="invalid-input" *ngIf="project.errors?.['required']">
+                                            Vui lòng chọn dự án!
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label fw-bold">Ưu tiên</label>
+                                    <select class="form-select" aria-label="Default select example" required ngModel
+                                        #priority="ngModel" name="priority">
+                                        <option disabled value="">Chọn sự ưu tiên</option>
+                                        <option value="1">Less Important</option>
+                                        <option value="2">Normal</option>
+                                        <option value="3">Important</option>
+                                    </select>
+                                    <div *ngIf="priority.invalid && (priority.dirty || priority.touched)" class="mt-1">
+                                        <div class="invalid-input" *ngIf="priority.errors?.['required']">Vui lòng chọn
+                                            sự ưu tiên!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AssignTo and Status -->
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label fw-bold">Phân công</label>
+                                    <select
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                        required
+                                        ngModel
+                                        #assignedTo="ngModel"
+                                        name="userId"
+                                    >
+                                        <option disabled value="">Phân công nhiệm vụ</option>
+                                        <option *ngFor="let employee of employees " value={{employee._id}}>
+                                            {{employee.name}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="assignedTo.invalid && (assignedTo.dirty || assignedTo.touched)"
+                                        class="mt-1">
+                                        <div class="invalid-input" *ngIf="assignedTo.errors?.['required']">Vui lòng chọn
+                                            phân công!</div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label fw-bold">Trạng thái</label>
+                                    <select class="form-select" aria-label="Default select example" required ngModel
+                                        #status="ngModel" name="status">
+                                        <option disabled value="">Chọn trạng thái</option>
+                                        <option value="1">Holding</option>
+                                        <option value="2">Processing</option>
+                                        <option value="3">Done</option>
+                                    </select>
+                                    <div *ngIf="status.invalid && (status.dirty || status.touched)" class="mt-1">
+                                        <div class="invalid-input" *ngIf="status.errors?.['required']">Vui lòng chọn
+                                            trạng thái!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label fw-bold" for="description">Mô tả</label>
+                                <textarea type="text" id="description" class="form-control" required ngModel
+                                    #description="ngModel" name="description"></textarea>
+                                <div *ngIf="description.invalid && (description.dirty || description.touched)"
+                                    class="mt-1">
+                                    <div class="invalid-input" *ngIf="description.errors?.['required']">Mô tả không được
+                                        để trống!</div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                                <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                                    [disabled]="!dataForm.valid">Tạo</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <table class="table align-middle mb-0 bg-white text-center">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>#</th>
+                <th>Tên nhiệm vụ</th>
+                <th>Ngày bắt đầu</th>
+                <th>Dự án</th>
+                <th>Sự ưu tiên</th>
+                <th>Trạng thái</th>
+                <th>Phân công</th>
+                <th>Mô tả</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="tasks.length > 0 && !isFetching">
+            <tr *ngFor="let task of tasks | paginate: {itemsPerPage: pageSize, currentPage: currentPageIndex}; index as i">
+                <th scope="row">{{i + 1}}</th>
+                <td>{{task.name}}</td>
+                <td>{{task.createdAt.substr(0, 10)}}</td>
+                <td>{{task.project.name}}</td>
+                <td>{{task.priority == 1 && 'Less Important' || task.priority == 2 && 'Normal' || task.priority == 3 && 'Important'}}</td>
+                <td>{{task.status === 1 && 'Pending' || task.priority == 2 && 'Processing' || task.priority == 3 && 'Done'}}</td>
+                <td>{{task.user.name}}</td>
+                <td>{{task.description}}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-danger me-2 btn-rounded"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalDeleteTask"
+                        (click)="deleteTask(task._id)"
+                    >
+                        Delete
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn- btn-primary rounded"
+                        data-bs-target="#modalEditTask"
+                        data-bs-toggle="modal"
+                        (click)="getOneTask(task._id)"
+                    >
+                        Edit
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+        <tr *ngIf="tasks.length === 0 && !errorMessage && !isFetching" class="text-center fw-bold">
+            <td colspan="9">Không có nhiệm vụ nào!</td>
+        </tr>
+    </table>
+
+    <!-- Pagination -->
+    <div class="mx-auto text-center mt-4" *ngIf="tasks.length > pageSize">
+        <pagination-controls (pageChange)="currentPageIndex = $event">
+        </pagination-controls>
+    </div>
+    <!-- Fetching -->
+    <div *ngIf="isFetching && !errorMessage" class="w-100 mt-3 loading">
+        <p class="spinner mx-auto"></p>
+    </div>
+    <!-- Alert error -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+        <h4>Có lỗi xảy ra!</h4>
+        <p>{{errorMessage}}</p>
+    </div>
+</div>
+
+<!-- Modal Edit Task -->
+<div class="modal modal-lg fade" id="modalEditTask" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cập nhật nhiệm vụ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #dataFormEdit="ngForm" (submit)="updateTask(dataFormEdit)">
+                    <!-- Task Name -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="name">Tên nhiệm vụ</label>
+                        <input type="text" id="name" required [(ngModel)]="taskEdit.taskName" #taskNameEdit="ngModel"
+                            name="name" class="form-control" />
+                        <div *ngIf="taskNameEdit.invalid && (taskNameEdit.dirty || taskNameEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="taskNameEdit.errors?.['required']">Tên nhiệm vụ không được
+                                để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Date Start -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="dateStart">Ngày bắt đầu</label>
+                        <input type="date" id="dateStart" required [(ngModel)]="taskEdit.dateStart"
+                            #dateStartEdit="ngModel" name="dateStart" class="form-control" />
+                        <div *ngIf="dateStartEdit.invalid && (dateStartEdit.dirty || dateStartEdit.touched)"
+                            class="mt-1">
+                            <div class="invalid-input" *ngIf="dateStartEdit.errors?.['required']">Ngày bắt đầu không
+                                được để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Project and Priority -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label fw-bold">Dự án</label>
+                            <select class="form-select" aria-label="Default select example" required
+                                [(ngModel)]="taskEdit.project" #projectEdit="ngModel" name="projectId">
+                                <option disabled value="">Chọn dự án</option>
+                                <option
+                                    *ngFor="let project of projects"
+                                    value={{project._id}}
+                                    [selected]="taskEdit.project === project._id"
+                                >
+                                    {{project.name}}
+                                </option>
+                            </select>
+                            <div *ngIf="projectEdit.invalid && (projectEdit.dirty || projectEdit.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="projectEdit.errors?.['required']">
+                                    Vui lòng chọn dự án!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label fw-bold">Ưu tiên</label>
+                            <select class="form-select" aria-label="Default select example" required
+                                [(ngModel)]="taskEdit.priority" #priorityEdit="ngModel" name="priority">
+                                <option disabled value="">Select Priority</option>
+                                <option value="1" [selected]="taskEdit.priority === '1'">Less Important</option>
+                                <option value="2" [selected]="taskEdit.priority === '2'">Normal</option>
+                                <option value="3" [selected]="taskEdit.priority === '3'">Important</option>
+                            </select>
+                            <div *ngIf="priorityEdit.invalid && (priorityEdit.dirty || priorityEdit.touched)"
+                                class="mt-1">
+                                <div class="invalid-input" *ngIf="priorityEdit.errors?.['required']">Vui lòng chọn sự ưu
+                                    tiên!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AssignTo and Status -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label fw-bold">Phân công</label>
+                            <select class="form-select" aria-label="Default select example" required
+                                [(ngModel)]="taskEdit.assignedTo" #assignedToEdit="ngModel" name="userId">
+                                <option disabled value="">Select User</option>
+                                <option
+                                    *ngFor="let employee of employees "
+                                    value={{employee._id}}
+                                    [selected]="taskEdit.assignedTo === employee._id"
+                                >
+                                    {{employee.name}}
+                                </option>
+                            </select>
+                            <div *ngIf="assignedToEdit.invalid && (assignedToEdit.dirty || assignedToEdit.touched)"
+                                class="mt-1">
+                                <div class="invalid-input" *ngIf="assignedToEdit.errors?.['required']">Vui lòng chọn
+                                    phân công!</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label fw-bold">Trạng thái</label>
+                            <select class="form-select" aria-label="Default select example" required
+                                [(ngModel)]="taskEdit.status" #statusEdit="ngModel" name="status">
+                                <option disabled value="">Select Status</option>
+                                <option value="1" [selected]="taskEdit.status === 1">
+                                    Pending
+                                </option>
+                                <option value="2" [selected]="taskEdit.status === 2">
+                                    Processing
+                                </option>
+                                <option value="3" [selected]="taskEdit.status === 3">
+                                    Done
+                                </option>
+                            </select>
+                            <div *ngIf="statusEdit.invalid && (statusEdit.dirty || statusEdit.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="statusEdit.errors?.['required']">Vui lòng chọn trạng
+                                    thái!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="description">Mô tả</label>
+                        <textarea type="text" id="description" class="form-control" required
+                            [(ngModel)]="taskEdit.description" #descriptionEdit="ngModel" name="description"></textarea>
+                        <div *ngIf="descriptionEdit.invalid && (descriptionEdit.dirty || descriptionEdit.touched)"
+                            class="mt-1">
+                            <div class="invalid-input" *ngIf="descriptionEdit.errors?.['required']">Mô tả không được để
+                                trống!</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal"
+                            [disabled]="!dataFormEdit.valid">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Task -->
+<div class="modal fade" id="modalDeleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xóa nhiệm vụ?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Bạn có chắc chắn muốn xóa nhiệm vụ này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-danger" (click)="confirmDeleteTask()"
+                    data-bs-dismiss="modal">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>

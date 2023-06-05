@@ -1,0 +1,229 @@
+<div class="mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h4>QUẢN LÝ DỰ ÁN</h4>
+        <div class="d-flex">
+            <form class="mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control form-control-dark" name="listFilter" [(ngModel)]="listFilter" placeholder="Search..." aria-label="Search">
+              </form>
+            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalNewProject">
+                Thêm mới
+            </button>
+        </div>
+          
+        <!-- Modal New Project -->
+        <div class="modal modal-lg fade" id="modalNewProject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm dự án mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form #dataForm="ngForm" (submit)="createProject(dataForm)">
+                        <!-- Project Name -->
+                        <div class="form-outline mb-3">
+                            <label class="form-label fw-bold" for="projectName">Tên dự án</label>
+                            <input type="text" id="projectName" name="projectName" required ngModel #projectName="ngModel" class="form-control" />
+                            <div *ngIf="projectName.invalid && (projectName.dirty || projectName.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="projectName.errors?.['required']">Tên dự án không được để trống!</div>
+                            </div>
+                        </div>
+
+                        <!-- Date Start -->
+                        <div class="form-outline mb-3">
+                            <label class="form-label fw-bold" for="dateStart">Ngày bắt đầu</label>
+                            <input type="date" id="dateStart" name="dateStart" required ngModel #dateStart="ngModel" class="form-control" />
+                            <div *ngIf="dateStart.invalid && (dateStart.dirty || dateStart.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="dateStart.errors?.['required']">Ngày bắt đầu không được để trống!</div>
+                            </div>
+                        </div>
+
+                        <!-- Date End -->
+                        <div class="form-outline mb-3">
+                            <label class="form-label fw-bold" for="dateEnd">Ngày kết thúc</label>
+                            <input type="date" id="dateEnd" name="dateEnd" required ngModel #dateEnd="ngModel" class="form-control" />
+                            <div *ngIf="dateEnd.invalid && (dateEnd.dirty || dateEnd.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="dateEnd.errors?.['required']">Ngày kết thúc không được để trống!</div>
+                            </div>
+                        </div>
+
+                        <!-- Team Size -->
+                        <div class="form-outline mb-3">
+                            <label class="form-label fw-bold" for="teamSize">Số lượng thành viên</label>
+                            <input type="number" min="0" id="teamSize" name="teamSize" required ngModel #teamSize="ngModel" class="form-control" />
+                            <div *ngIf="teamSize.invalid && (teamSize.dirty || teamSize.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="teamSize.errors?.['required']">Số lượng thành viên không được để trống!</div>
+                            </div>
+                        </div>
+
+                        <!-- Budget and Spending -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label fw-bold" for="budget">Ngân sách</label>
+                            <input type="number" id="budget" name="budget" required ngModel #budget="ngModel" class="form-control" />
+                            <div *ngIf="budget.invalid && (budget.dirty || budget.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="budget.errors?.['required']">Ngân sách không được để trống!</div>
+                            </div>
+                        </div>
+                        <!-- <div class="col">
+                            <label class="form-label fw-bold" for="spending">Chi phí</label>
+                            <input type="number" id="spending" name="spending" required ngModel #spending="ngModel" class="form-control" />
+                            <div *ngIf="spending.invalid && (spending.dirty || spending.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="spending.errors?.['required']">Chi phí không được để trống!</div>
+                            </div>
+                        </div> -->
+                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="!dataForm.valid">Tạo</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <table class="table align-middle mb-0 bg-white text-center">
+        <thead class="bg-dark text-white">
+        <tr>
+            <th>#</th>
+            <th>Tên dự án</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Số lượng thành viên</th>
+            <th>Ngân sách</th>
+            <th>Đã chi</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody *ngIf="projects.length > 0 && !isFetching">
+        <tr *ngFor="let project of projects | paginate: {itemsPerPage: pageSize, currentPage: currentPageIndex}; index as i">
+            <th scope="row">{{i + 1}}</th>
+            <td>{{project.projectName}}</td>
+            <td>{{project.dateStart.substr(0, 10)}}</td>
+            <td>{{project.dateEnd.substr(0, 10)}}</td>
+            <td>{{project.teamSize}}</td>
+            <td>{{project.budget | currency}}</td>
+            <td>{{project.spending | currency}}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger me-2 btn-rounded" data-bs-toggle="modal" data-bs-target="#modalDeleteProject" (click)="deleteProject(project._id)">
+                    Xóa
+                </button>
+                <button type="button" class="btn btn-sm btn- btn-primary rounded" data-bs-target="#modalEditProject" data-bs-toggle="modal" (click)="getOneProject(project._id)">
+                    Sửa
+                </button>
+            </td>
+        </tr>
+        </tbody>
+        <tr *ngIf="projects.length === 0 && !errorMessage && !isFetching" class="text-center fw-bold"><td colspan="8">Không có dự án nào!</td></tr>
+    </table>
+    <!-- Pagination -->
+    <div class="mx-auto text-center mt-4" *ngIf="projects.length > pageSize">
+        <pagination-controls 
+            (pageChange)="currentPageIndex = $event">
+        </pagination-controls>
+    </div>
+    <!-- Fetching -->
+    <div *ngIf="isFetching && !errorMessage" class="w-100 mt-3 loading">
+        <p class="spinner mx-auto"></p>
+    </div>
+    <!-- Alert error -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+        <h4>Có lỗi xảy ra!</h4>
+        <p>{{errorMessage}}</p>
+    </div>
+</div>
+
+<!-- Modal Edit Project -->
+<div class="modal modal-lg fade" id="modalEditProject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cập nhật dự án</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #dataFormEdit="ngForm" (submit)="updateProject(dataFormEdit)">
+                    <!-- Project Name -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="projectName">Tên dự án</label>
+                        <input type="text" id="projectName" name="projectName" [(ngModel)]="projectEdit.projectName" required #projectNameEdit="ngModel" class="form-control" />
+                        <div *ngIf="projectNameEdit.invalid && (projectNameEdit.dirty || projectNameEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="projectNameEdit.errors?.['required']">Tên dự án không được để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Date Start -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="dateStart">Ngày bắt đầu</label>
+                        <input type="date" id="dateStart" name="dateStart" required [(ngModel)]="projectEdit.dateStart" #dateStartEdit="ngModel" class="form-control" />
+                        <div *ngIf="dateStartEdit.invalid && (dateStartEdit.dirty || dateStartEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="dateStartEdit.errors?.['required']">Ngày bắt đầu không được để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Date End -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="dateEnd">Ngày kết thúc</label>
+                        <input type="date" id="dateEnd" name="dateEnd" required [(ngModel)]="projectEdit.dateEnd" #dateEndEdit="ngModel" class="form-control" />
+                        <div *ngIf="dateEndEdit.invalid && (dateEndEdit.dirty || dateEndEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="dateEndEdit.errors?.['required']">Date End không được để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Team Size -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold" for="teamSize">Số lượng thành viên</label>
+                        <input type="number" min="0" id="teamSize" name="teamSize" required [(ngModel)]="projectEdit.teamSize" #teamSizeEdit="ngModel" class="form-control" />
+                        <div *ngIf="teamSizeEdit.invalid && (teamSizeEdit.dirty || teamSizeEdit.touched)" class="mt-1">
+                            <div class="invalid-input" *ngIf="teamSizeEdit.errors?.['required']">Số lượng thành viên không được để trống!</div>
+                        </div>
+                    </div>
+
+                    <!-- Budget and Spending -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label fw-bold" for="budget">Ngân sách</label>
+                            <input type="number" id="budget" name="budget" required [(ngModel)]="projectEdit.budget" #budgetEdit="ngModel" class="form-control" />
+                            <div *ngIf="budgetEdit.invalid && (budgetEdit.dirty || budgetEdit.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="budgetEdit.errors?.['required']">Ngân sách không được để trống!</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="form-label fw-bold" for="spending">Chi phí</label>
+                            <input type="number" id="spending" name="spending" required [(ngModel)]="projectEdit.spending" #spendingEdit="ngModel" class="form-control" />
+                            <div *ngIf="spendingEdit.invalid && (spendingEdit.dirty || spendingEdit.touched)" class="mt-1">
+                                <div class="invalid-input" *ngIf="spendingEdit.errors?.['required']">Chi phí không được để trống!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Thoát</button>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" [disabled]="!dataFormEdit.valid">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Project -->
+<div class="modal fade" id="modalDeleteProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Xóa dự án?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-muted">Bạn có chắc chắn muốn xóa dự án này không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Thoát</button>
+            <button type="button" class="btn btn-danger" (click)="confirmDeleteProject()" data-bs-dismiss="modal">Xóa</button>
+        </div>
+    </div>
+    </div>
+</div>
