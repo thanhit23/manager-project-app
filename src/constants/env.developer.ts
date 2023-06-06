@@ -1,3 +1,3 @@
 export default {
-  BASE_URL: 'http://localhost:3303',
+  BASE_URL: 'https://api-manager-project.vercel.app',
 }
