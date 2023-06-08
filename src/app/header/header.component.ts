@@ -24,14 +24,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.token = this.authService.getToken();
 
     if (this.token) {
-      this.user = decode(this.token);
+      const user: { user: {} } = decode(this.token);
+      this.user = user?.user;
     }
   }
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     this.user = null;
-    this.router.navigate(['login']);
+    this.authService.setToken();
+    this.router.navigate(['/login']);
   }
 
   updateProfile(id: string, dataForm: NgForm) {

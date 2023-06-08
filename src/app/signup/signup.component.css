@@ -1,0 +1,5 @@
+.img-fluid {
+  max-width: fit-content;
+  height: 100%;
+  padding: 50px;
+}
