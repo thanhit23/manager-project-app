@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from '../services/auth.service';
+import { ROLE } from '../../constants/role';
 
 @Component({
   selector: 'app-login',
@@ -18,14 +19,6 @@ export class LoginComponent implements OnInit {
   onSubmit(data: NgForm) {
     this.authService.login(data.value).subscribe((res: any) => {
       const { data: { tokens: { access } }, message } = res;
-      const ROLE = {
-        leader: {
-          id: 1
-        },
-        employee: {
-          id: 2
-        },
-      }
       
       this.authService.setToken(access);
 
@@ -59,6 +52,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      
+    this.authService.getMe();
   }
 }
