@@ -34,8 +34,12 @@ export class AuthService implements CanActivate {
     return new HttpHeaders({ 'Authorization': `Bearer ${this.token}` })
   }
 
-  setToken(token: string) {
-    this.token = token;
+  setToken(token?: string) {
+    if (token) {
+      this.token = token;
+    } else {
+      this.token = '';
+    }
   }
 
   getToken(): string {
