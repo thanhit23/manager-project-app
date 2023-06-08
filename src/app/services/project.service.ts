@@ -20,17 +20,11 @@ export class ProjectService {
   }
 
   getAllProject() {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`
-    })
-
-    return this.http.get(env.BASE_URL + '/v1/project' , { headers });
+    return this.http.get(env.BASE_URL + '/v1/project' , { headers: this.authService.setTokenHeaders()  });
   }
 
   getOneProject(id: any) {
-    return this.http.get(this.url + 'get-one-project/' + id , {
-      headers: new HttpHeaders().set('x-access-token', this.authService.getToken())
-    });
+    return this.http.get(env.BASE_URL + '/v1/project/' + id , { headers: this.authService.setTokenHeaders() });
   }
 
   updateProject(id: any, data: object) {

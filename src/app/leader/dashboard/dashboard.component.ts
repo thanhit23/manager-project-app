@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { TaskService } from 'src/app/services/task.service';
+import { AREA, STATUS } from '../../../constants/employee';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,39 +37,40 @@ export class DashboardComponent {
     this.token = this.authService.getToken();
 
     if (this.token) {
-      this.user = decode(this.token);
+      const { user }: { user: object } = decode(this.token);
+      this.user = user;
     }
   }
 
   getAllEmployee() {
     this.employeeService.getAllEmployee().subscribe((res: any) => {
-      this.employees = res.employee;
-      // Tính số nhân viên từng khu vực
-      this.empAreaEast = res.employee.filter((employee: any) => employee.area.nameArea === 'East');
-      this.empAreaWest = res.employee.filter((employee: any) => employee.area.nameArea === 'West');
-      this.empAreaSouth = res.employee.filter((employee: any) => employee.area.nameArea === 'South');
-      this.empAreaNorth = res.employee.filter((employee: any) => employee.area.nameArea === 'North');
-
-      // Lọc ra nhân viên tạm nghĩ từng khu vực
-      this.empBusyAreaEast = this.empAreaEast.filter((employee: any) => employee.status === 'Busy');
-      this.empBusyAreaWest = this.empAreaWest.filter((employee: any) => employee.status === 'Busy');
-      this.empBusyAreaSouth = this.empAreaSouth.filter((employee: any) => employee.status === 'Busy');
-      this.empBusyAreaNorth = this.empAreaNorth.filter((employee: any) => employee.status === 'Busy');
+      const { data } = res;
+      this.employees = data;
       
+      this.empAreaEast = data.filter(({ area }: { area: string }) => area === AREA.EAST.name);
+      this.empAreaWest = data.filter(({ area }: { area: string }) => area === AREA.WEST.name);
+      this.empAreaSouth = data.filter(({ area }: { area: string }) => area === AREA.SOUTH.name);
+      this.empAreaNorth = data.filter(({ area }: { area: string }) => area === AREA.NORTH.name);
+
+      this.empBusyAreaEast = this.empAreaEast.filter(({ status }: { status: string }) => status === STATUS.BUSY.name);
+      this.empBusyAreaWest = this.empAreaWest.filter(({ status }: { status: string }) => status === STATUS.BUSY.name);
+      this.empBusyAreaSouth = this.empAreaSouth.filter(({ status }: { status: string }) => status === STATUS.BUSY.name);
+      this.empBusyAreaNorth = this.empAreaNorth.filter(({ status }: { status: string }) => status === STATUS.BUSY.name);
     })
   }
 
   getAllProject() {
     this.projectService.getAllProject().subscribe((res: any) => {
-      this.projects = res.projects;
+      const { data } = res;
+      this.projects = data;
+      
       if(this.projects.length > 0) {
         this.projectId = this.projects[0]._id;
         this.selectProject(this.projectId);
       }
-      
-      res.projects.forEach((project: any) => {
-        this.totalBudgetProject += project.budget;
-        
+
+      data.forEach(({ budget }: { budget: number }) => {
+        this.totalBudgetProject += budget;
       });
     })
   }
@@ -78,14 +80,15 @@ export class DashboardComponent {
 
     if(this.projectId) {
       this.projectService.getOneProject(this.projectId).subscribe((res: any) => {
-        this.projectById = res.project;     
+        this.projectById = res.data;     
       })
     }
   }
 
   getAllTask() {
     this.taskService.getAllTask().subscribe((res: any) => {
-      this.taskProcessing = res.tasks.filter((task: any) => task.status == 'Processing');
+      const { data } = res;
+      this.taskProcessing = data.filter(({ status }: { status: string }) => status == 'Processing');
     })
   }
 
