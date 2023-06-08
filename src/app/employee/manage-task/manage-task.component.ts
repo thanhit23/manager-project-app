@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { TaskService } from 'src/app/services/task.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-manage-task',
@@ -32,7 +33,13 @@ export class ManageTaskComponent implements OnInit {
     description: ''
   }
 
-  constructor(private taskService: TaskService, private projectService: ProjectService, private employeeService: EmployeeService, private toast: ToastrService) {}
+  constructor(
+    private taskService: TaskService,
+    private projectService: ProjectService,
+    private employeeService: EmployeeService,
+    private toast: ToastrService,
+    private authService: AuthService
+  ) {}
 
   // Lấy tất cả các task
   getAllTask() {
@@ -174,6 +181,7 @@ export class ManageTaskComponent implements OnInit {
   currentPageIndex: number = 1;
 
   ngOnInit(): void {
+    this.authService.getMe();
     this.getAllTask();
     this.getAllProject();
     this.getAllEmployee();

@@ -2,9 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { ToastrService } from 'ngx-toastr';
 import { EventEmitter } from '@angular/core';
 
 import env from '../../constants/env.developer';
+import { ROLE } from '../../constants/role';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,7 @@ import env from '../../constants/env.developer';
 export class AuthService implements CanActivate {
   token: string = localStorage.getItem('accessToken') ?? '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private toast: ToastrService) {}
 
   loginSuccess: EventEmitter<any> = new EventEmitter();
 
@@ -26,6 +28,10 @@ export class AuthService implements CanActivate {
       return false
     }
     return true;
+  }
+
+  setTokenHeaders() {
+    return new HttpHeaders({ 'Authorization': `Bearer ${this.token}` })
   }
 
   setToken(token: string) {
@@ -42,6 +48,38 @@ export class AuthService implements CanActivate {
 
   login (dataForm: object) {
     return this.http.post(env.BASE_URL + '/auth/login', dataForm);
+  }
+
+  me () {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getToken()}`
+    })
+
+    return this.http.get(env.BASE_URL + '/auth/me', { headers });
+  }
+
+  getMe () {
+    this.me().subscribe((res: any) => {
+      const { status, data: { role } } = res;
+
+      if (status) {
+        if(role === ROLE.leader.id) {
+          this.router.navigate(['/']);
+        } else {
+          this.router.navigate(['employee/manage-task']);
+        }
+      }
+    }, e => {
+      this.toast.error(`${e.error.message}!`, 'Thất bại!', {
+        progressAnimation: 'decreasing',
+        positionClass: 'toast-top-right',
+        tapToDismiss: false,
+        easeTime: 200,
+      });
+      this.setToken('');
+
+      this.router.navigate(['/login']);
+    })
   }
 
   isLoggedIn():boolean {

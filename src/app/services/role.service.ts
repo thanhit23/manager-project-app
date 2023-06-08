@@ -23,7 +23,7 @@ export class RoleService implements CanActivate {
       this.router.navigate(['login']);
       return false;
 
-    } else if(tokenPayload.typeUser !== role) {
+    } else if(tokenPayload.user.role !== role) {
       this.router.navigate(['forbidden']);
       return false;
 
