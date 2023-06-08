@@ -35,7 +35,9 @@ export class LoginComponent implements OnInit {
         easeTime: 200
       });
 
-      if(user.role === ROLE.leader.id) {
+      if(user.user.role === ROLE.leader.id) {
+        console.log(user.user.role, 'user.user.role');
+        
         this.router.navigate(['/']);
       } else {
         this.router.navigate(['employee/manage-task']);
