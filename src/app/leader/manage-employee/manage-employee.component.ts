@@ -30,7 +30,7 @@ export class ManageEmployeeComponent implements OnInit {
   getAllEmployee() {
     this.isFetching = true;
     this.employeeService.getAllEmployee().subscribe((res:any) => {
-      this.employees = res.employee;
+      this.employees = res.data;
       this.employeeSearch = this.employees;
 
       this.isFetching = false
@@ -40,7 +40,6 @@ export class ManageEmployeeComponent implements OnInit {
     })
   }
 
-  // Xóa employee
   deleteEmployee(employeeId: string) {
     this.deleteEmployeeId = employeeId;
   }
