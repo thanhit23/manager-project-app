@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { EmployeeService } from 'src/app/services/employee.service';
+import { configToast } from '../../../constants/toastMessage';
 
 @Component({
   selector: 'app-manage-employee',
@@ -50,16 +51,7 @@ export class ManageEmployeeComponent implements OnInit {
         this.deleteEmployeeId = '';
         this.getAllEmployee();
   
-        this.toast.success(`${res.message}`, 'Success!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
+        this.toast.success(`${res.message}`, 'Success!', configToast);
       }, err => {
         this.errorMessage = err.message
       })
@@ -85,16 +77,8 @@ export class ManageEmployeeComponent implements OnInit {
         this.editEmployeeId = '';
         this.getAllEmployee();
 
-        this.toast.success(`${res.message}`, 'Success!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
+        this.toast.success(`${res.message}`, 'Success!', configToast);
+
       }, err => {
         this.errorMessage = err.message
       })

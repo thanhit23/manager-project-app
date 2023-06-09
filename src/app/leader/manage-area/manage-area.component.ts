@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AreaService } from 'src/app/services/area.service';
+import { configToast } from '../../../constants/toastMessage';
 
 @Component({
   selector: 'app-manage-area',
@@ -22,39 +23,21 @@ export class ManageAreaComponent implements OnInit {
 
   constructor(private areaService: AreaService, private toast: ToastrService) {}
 
-  // Thêm mới
   createArea(dataForm: NgForm) {
     this.areaService.createArea(dataForm.value).subscribe((res:any) => {
       this.getAllArea();
 
-      this.toast.success(`${res.message}`, 'Success!', {
-        timeOut: 2000,
-        progressBar: true,
-        progressAnimation: 'decreasing',
-        closeButton: true,
-        positionClass: 'toast-top-right',
-        enableHtml: true,
-        tapToDismiss: false,
-        easeTime: 200
-      });
-
+      this.toast.success(`${res.message}`, 'Success!', configToast);
       dataForm.reset();
-      
     }, err => {
-      this.toast.error(`${err.error.message}`, 'Error!', {
-        timeOut: 2000,
-        progressBar: true,
-        progressAnimation: 'decreasing',
-        closeButton: true,
-        positionClass: 'toast-top-right',
-        enableHtml: true,
-        tapToDismiss: false,
-        easeTime: 200
-      });
+      this.toast.error(
+        `${err.error.message}`,
+        'Success!',
+        { ...configToast, progressAnimation: 'decreasing', }
+      );
     })
   }
 
-  // Lấy tất cả project
   getAllArea() {
     this.isFetching = true;
     this.areaService.getAllArea().subscribe((res:any) => {
@@ -68,7 +51,6 @@ export class ManageAreaComponent implements OnInit {
     })
   }
 
-  // Xóa project
   deleteArea(projectId: string) {
     this.deleteAreaId = projectId;
   }
@@ -79,23 +61,13 @@ export class ManageAreaComponent implements OnInit {
         this.deleteAreaId = '';
         this.getAllArea();
   
-        this.toast.success(`${res.message}`, 'Success!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
+        this.toast.success(`${res.message}`, 'Success!', configToast);
       }, err => {
         this.errorMessage = err.message
       })
     }
   }
 
-  // Lấy project theo id
   getOneArea(areaId: string) {
     this.editAreaId = areaId;
     this.areaService.getOneArea(areaId).subscribe((res:any) => {
@@ -103,40 +75,19 @@ export class ManageAreaComponent implements OnInit {
     })
   }
 
-  // Cập nhật project
   updateArea(dataFormEdit: NgForm) {
     if(this.editAreaId) {
       this.areaService.updateArea(this.editAreaId, dataFormEdit.value).subscribe((res:any) => {
         this.editAreaId = '';
         this.getAllArea();
 
-        this.toast.success(`${res.message}`, 'Success!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
-        
+        this.toast.success(`${res.message}`, 'Success!', configToast);
       }, err => {
-        this.toast.error(`${err.error.message}`, 'Error!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
+        this.toast.error(`${err.error.message}`, 'Success!', configToast);
       })
     }
   }
 
-  // Lọc
   get listFilter() {
     return this.dataSearch;
   }
@@ -146,7 +97,6 @@ export class ManageAreaComponent implements OnInit {
     this.areas = this.areaSearch.filter((area: any) => area.nameArea.toLowerCase().includes(this.listFilter.toLowerCase()));
   }
 
-  // Phân trang
   pageSize: number = 4;
   currentPageIndex: number = 1;
 

@@ -3,16 +3,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
-const configToast: {
-  positionClass: string;
-  tapToDismiss: boolean;
-  easeTime: number;
-} = {
-  positionClass: 'toast-top-right',
-  tapToDismiss: false,
-  easeTime: 200,
-}
+import { configToast } from '../../constants/toastMessage';
 
 @Component({
   selector: 'app-signup',

@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit } from '@angular/core';
 
-import { AuthService } from '../services/auth.service';
 import { ROLE } from '../../constants/role';
+import { AuthService } from '../services/auth.service';
+import { configToast } from '../../constants/toastMessage';
 
 @Component({
   selector: 'app-login',
@@ -28,12 +29,7 @@ export class LoginComponent implements OnInit {
 
       this.authService.loginSuccess.emit();
 
-      this.toast.success(`${message}!`, 'Thành công!', {
-        progressAnimation: 'decreasing',
-        positionClass: 'toast-top-right',
-        tapToDismiss: false,
-        easeTime: 200
-      });
+      this.toast.success(`${message}`, 'Success!', configToast);
 
       if(user.user.role === ROLE.leader.id) {
         console.log(user.user.role, 'user.user.role');
@@ -43,14 +39,8 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['employee/manage-task']);
       }
 
-    }, err => {
-      this.toast.error(`${err.error.message}!`, 'Thất bại!', {
-        progressAnimation: 'decreasing',
-        positionClass: 'toast-top-right',
-        tapToDismiss: false,
-        easeTime: 200,
-      });
-    })
+    },
+    ({ error: { message }}) => this.toast.error(`${message}`, 'Error!', configToast))
   }
 
   ngOnInit(): void {
