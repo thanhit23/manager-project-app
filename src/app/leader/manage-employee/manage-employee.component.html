@@ -24,8 +24,8 @@
             <th scope="row">{{i + 1}}</th>
             <td>{{employee.name}}</td>
             <td>{{employee.email}}</td>
-            <td>{{employee.phoneNumber}}</td>
-            <td>{{employee.area.nameArea}}</td>
+            <td>{{employee.phone_number}}</td>
+            <td>{{employee.area}}</td>
             <td>{{employee.status === 'Available' ? 'Sẵn sàng' : 'Tạm nghỉ'}}</td>
             <td>
                 <button type="button" class="btn btn-sm btn-danger me-2 btn-rounded" data-bs-toggle="modal" data-bs-target="#modalDeleteEmployee" (click)="deleteEmployee(employee._id)">
