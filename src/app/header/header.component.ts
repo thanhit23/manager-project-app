@@ -7,6 +7,7 @@ import { OnDestroy } from '@angular/core';
 import { EmployeeService } from '../services/employee.service';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { configToast } from '../../constants/toastMessage';
 
 @Component({
   selector: 'app-header',
@@ -37,20 +38,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   updateProfile(id: string, dataForm: NgForm) {
-    
     this.employeeService.updateProfile(id, dataForm.value).subscribe((res: any) => {
-
-      this.toast.success(`${res.message}. Vui lòng đăng nhập lại!`, 'Success!', {
-        timeOut: 2000,
-        progressBar: true,
-        progressAnimation: 'decreasing',
-        closeButton: true,
-        positionClass: 'toast-top-right',
-        enableHtml: true,
-        tapToDismiss: false,
-        easeTime: 200
-      });
-
+      this.toast.success(`${res.message}. Vui lòng đăng nhập lại!`, 'Success!', configToast);
       this.logout();
     })
   }

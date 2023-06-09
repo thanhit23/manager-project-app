@@ -5,6 +5,7 @@ import { EmployeeService } from 'src/app/services/employee.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { TaskService } from 'src/app/services/task.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { configToast } from '../../../constants/toastMessage';
 
 @Component({
   selector: 'app-manage-task',
@@ -61,19 +62,8 @@ export class ManageTaskComponent implements OnInit {
     this.taskService.createTask(dataForm.value).subscribe((res:any) => {
       this.getAllTask();
 
-      this.toast.success(`${res.message}`, 'Success!', {
-        timeOut: 2000,
-        progressBar: true,
-        progressAnimation: 'decreasing',
-        closeButton: true,
-        positionClass: 'toast-top-right',
-        enableHtml: true,
-        tapToDismiss: false,
-        easeTime: 200
-      });
-
+      this.toast.success(`${res.message}`, 'Success!', configToast);
       dataForm.reset();
-      
     }, error => {
       console.log(error);
       
@@ -81,7 +71,6 @@ export class ManageTaskComponent implements OnInit {
     })
   }
 
-  // Xóa task
   deleteTask(taskId: string) {
     this.deleteTaskId = taskId;
   }
@@ -92,20 +81,13 @@ export class ManageTaskComponent implements OnInit {
         this.deleteTaskId = '';
         this.getAllTask();
   
-        this.toast.success(`${res.message}`, 'Success!', {
-          progressAnimation: 'decreasing',
-          positionClass: 'toast-top-right',
-          tapToDismiss: false,
-          easeTime: 200
-        });
-
+        this.toast.success(`${res.message}`, 'Success!', configToast);
       }, err => {
         this.errorMessage = err.message
       })
     }
   }
 
-   // Lấy project theo id
   getOneTask(taskId: string) {
     this.editTaskId = taskId;
 
@@ -122,34 +104,20 @@ export class ManageTaskComponent implements OnInit {
     })
   }
 
-  // Cập nhật task
   updateTask(dataFormEdit: NgForm) {
     if(this.editTaskId) {
       this.taskService.updateTask(this.editTaskId, dataFormEdit.value).subscribe((res:any) => {
         this.editTaskId = '';
         this.getAllTask();
-
-        this.toast.success(`${res.message}`, 'Success!', {
-          timeOut: 2000,
-          progressBar: true,
-          progressAnimation: 'decreasing',
-          closeButton: true,
-          positionClass: 'toast-top-right',
-          enableHtml: true,
-          tapToDismiss: false,
-          easeTime: 200
-        });
-
+        this.toast.success(`${res.message}`, 'Success!', configToast);
       }, err => {
         console.log(err);
         
         this.errorMessage = err.message;
       })
     }
-    
   }
 
-  // Lấy tất cả dự án
   getAllProject() {
     this.projectService.getAllProject().subscribe((res: any) => {
       this.projects = res.data;

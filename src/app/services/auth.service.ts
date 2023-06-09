@@ -5,8 +5,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
 import { EventEmitter } from '@angular/core';
 
-import env from '../../constants/env.developer';
 import { ROLE } from '../../constants/role';
+import env from '../../constants/env.developer';
+import { configToast } from '../../constants/toastMessage';
 
 @Injectable({
   providedIn: 'root'
@@ -73,13 +74,9 @@ export class AuthService implements CanActivate {
           this.router.navigate(['employee/manage-task']);
         }
       }
-    }, e => {
-      this.toast.error(`${e.error.message}!`, 'Thất bại!', {
-        progressAnimation: 'decreasing',
-        positionClass: 'toast-top-right',
-        tapToDismiss: false,
-        easeTime: 200,
-      });
+    }, ({ error: { message }}) => {
+      this.toast.error(`${message}`, 'Error!', configToast);
+
       this.setToken('');
 
       this.router.navigate(['/login']);
